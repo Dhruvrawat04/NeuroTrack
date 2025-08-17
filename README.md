@@ -5,7 +5,7 @@
 
 ## ✨ Key Features
 
-### 📊 Intelligent Time Tracking<img width="746" height="826" alt="image" src="https://github.com/user-attachments/assets/273bf79c-d276-41b8-91b6-52fc817b447c" />
+### 📊 Intelligent Time Tracking
 
 - Automatic time collision detection
 - Smart task duration predictions
@@ -27,3 +27,14 @@
    ```bash
    git clone https://github.com/your-username/NeuroTrack.git
    cd NeuroTrack
+##📸 Screenshots   
+<img width="1735" height="731" alt="image" src="https://github.com/user-attachments/assets/6dd72d0c-e4e1-4dc6-9ca2-3341086d9664" />
+
+
+🌟 Why NeuroTrack Dominates
+Feature                  |	Tech Behind It            	Live Demo
+🧠 AI Task Predictions  	ml_models.py	         https://colab.research.google.com/assets/colab-badge.svg
+🔥 Burnout Radar	        Analytics.py	            https://imgur.com/burnout-chart.png
+📊 Priority Sunbursts	  insight_charts.py	      
+python\npx.sunburst(data, path=['priority','category'])\n
+
