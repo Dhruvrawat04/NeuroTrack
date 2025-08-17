@@ -34,7 +34,15 @@
 🌟 Why NeuroTrack Dominates
 |	 Feature | Implementation | Example |
 |---------|----------------|---------|
-| **Time Tracking** | `data_handler.py` | ```python\nadd_manual_task(task_name="Code", time_taken=90)\n``` |
+| **Time Tracking** | `data_handler.py` | ```python\nadd_manual_task(task_name="Code", time_taken=90)``` |
 | **Burnout Alerts** | `Analytics.py` | `risk = assess_burnout_risk(last_week_data)` |
-| **Visualizations** | `insight_charts.py` | <pre>fig = px.sunburst(\n    data,\n    path=['priority']\n)</pre> |
+| **Visualizations** | `insight_charts.py` | <pre>fig = px.sunburst(data, path=['priority'])</pre> |
+
+
+<details>
+<summary>💻 <b>View Installation Code</b></summary>
+
+```bash
+pip install -r requirements.txt
+streamlit run app.py
 
