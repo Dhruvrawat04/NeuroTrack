@@ -39,12 +39,15 @@
 | **Visualizations** | `insight_charts.py` | <pre>fig = px.sunburst(data, path=['priority'])</pre> |
 
 
-<details>
-<summary>💻 <b>View Installation Code</b></summary>
+
+2. **💻 View Installation Code**
 
 ```bash
 pip install -r requirements.txt
-streamlit run app.py
+```
+
+3. **📦 Launch the app**
+```streamlit run app.py
 ```
 ## 🔍 Why Developers Love NeuroTrack
 
@@ -62,3 +65,12 @@ graph LR
     B --> C{ML Models}
     C --> D[Predictions]
     C --> E[Insights]
+
+<details> <summary>💡 Pro Tips</summary>
+Use pre-commit hooks for consistent formatting
+
+Add tests in /tests for new features
+
+Document all new methods with type hints
+
+</details> ```
