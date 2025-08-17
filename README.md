@@ -46,3 +46,21 @@
 pip install -r requirements.txt
 streamlit run app.py
 
+## 🔍 Why Developers Love NeuroTrack
+### 🛠️ **Code-Friendly Architecture**
+```python
+# From your data_handler.py - Show clean API design
+def add_manual_task(
+    df: pd.DataFrame,
+    task_name: str,  # Type hints for IDE support
+    time_taken: int,
+    **kwargs  # Flexible parameters
+) -> pd.DataFrame:
+    """Clean, documented method signature"""
+# From ml_models.py - Easy to modify
+class MLModelHandler:
+    def __init__(self):
+        self.model = RandomForestClassifier(
+            n_estimators=100,  # Tunable hyperparameters
+            max_depth=12
+        )
