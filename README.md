@@ -5,7 +5,8 @@
 
 ## ✨ Key Features
 
-### 📊 Intelligent Time Tracking
+### 📊 Intelligent Time Tracking<img width="746" height="826" alt="image" src="https://github.com/user-attachments/assets/273bf79c-d276-41b8-91b6-52fc817b447c" />
+
 - Automatic time collision detection
 - Smart task duration predictions
 - Priority-based scheduling insights
