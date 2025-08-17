@@ -45,22 +45,20 @@
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
-
+```
 ## 🔍 Why Developers Love NeuroTrack
-### 🛠️ **Code-Friendly Architecture**
-```python
-# From your data_handler.py - Show clean API design
-def add_manual_task(
-    df: pd.DataFrame,
-    task_name: str,  # Type hints for IDE support
-    time_taken: int,
-    **kwargs  # Flexible parameters
-) -> pd.DataFrame:
-    """Clean, documented method signature"""
-# From ml_models.py - Easy to modify
-class MLModelHandler:
-    def __init__(self):
-        self.model = RandomForestClassifier(
-            n_estimators=100,  # Tunable hyperparameters
-            max_depth=12
-        )
+
+### 🛠️ **Clean Codebase**
+[![View Core Module](https://img.shields.io/badge/📦_data__handler.py-Click_to_Explore-blue?logo=github)](https://github.com/YOUR_GITHUB_USERNAME/NeuroTrack/blob/main/data_handler.py)
+- Type-hinted Python
+- Modular architecture
+- 100% documented methods
+
+### 🤖 **ML Playground**
+[![Customize AI](https://img.shields.io/badge/🧠_ml__models.py-Add_Your_Model-purple?logo=scikit-learn)](https://github.com/YOUR_GITHUB_USERNAME/NeuroTrack/blob/main/ml_models.py)
+```mermaid
+graph LR
+    A[Your Data] --> B(data_handler.py)
+    B --> C{ML Models}
+    C --> D[Predictions]
+    C --> E[Insights]
