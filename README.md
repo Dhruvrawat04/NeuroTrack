@@ -47,30 +47,36 @@ pip install -r requirements.txt
 ```
 
 3. **📦 Launch the app**
-```streamlit run app.py
+```bash
+streamlit run app.py
 ```
 ## 🔍 Why Developers Love NeuroTrack
 
 ### 🛠️ **Clean Codebase**
-[![View Core Module](https://img.shields.io/badge/📦_data__handler.py-Click_to_Explore-blue?logo=github)](https://github.com/YOUR_GITHUB_USERNAME/NeuroTrack/blob/main/data_handler.py)
+[![View Core Module](https://img.shields.io/badge/📦_data__handler.py-Click_to_Explore-blue?logo=github)]
 - Type-hinted Python
 - Modular architecture
 - 100% documented methods
 
 ### 🤖 **ML Playground**
-[![Customize AI](https://img.shields.io/badge/🧠_ml__models.py-Add_Your_Model-purple?logo=scikit-learn)](https://github.com/YOUR_GITHUB_USERNAME/NeuroTrack/blob/main/ml_models.py)
+[![Customize AI](https://img.shields.io/badge/%F0%9F%A7%A0_ml__models.py-Customize-purple?logo=scikit-learn)]
 ```mermaid
-graph LR
-    A[Your Data] --> B(data_handler.py)
-    B --> C{ML Models}
-    C --> D[Predictions]
-    C --> E[Insights]
+       +-------------+       +----------------+       +-----------+
+       |  Raw Data   | ----> | Preprocessing  | ----> | ML Model  |
+       +-------------+       +----------------+       +-----------+
+                                      |                     |
+                                      v                     v
+                              +----------------+    +----------------+
+                              |  Clean Data   |    |  Predictions   |
+                              +----------------+    +----------------+
 
-<details> <summary>💡 Pro Tips</summary>
-Use pre-commit hooks for consistent formatting
+```
+<img width="1772" height="666" alt="image" src="https://github.com/user-attachments/assets/1928ccdc-2b44-4638-95bf-2ac44fd75562" />
+<img width="1762" height="647" alt="image" src="https://github.com/user-attachments/assets/77ffd4f3-b5ab-4f5c-9aea-18ce2e3b0072" />
 
-Add tests in /tests for new features
-
-Document all new methods with type hints
-
-</details> ```
+### **💡Pro Tips**
+- Use pre-commit hooks for consistent formatting
+- Add tests in /tests for new features
+- Document all new methods with type hints
+- Follow PEP 8 style guidelines
+- Use meaningful variable names
