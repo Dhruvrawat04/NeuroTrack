@@ -1,3 +1,5 @@
+# ==================== IMPORTS ====================
+# Data processing
 import pandas as pd
 
 class MLInsightsGenerator:

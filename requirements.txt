@@ -6,20 +6,13 @@ plotly==5.18.0
 
 # Machine Learning & Data Science
 scikit-learn==1.3.2
-scipy==1.11.4
-joblib==1.3.2
 
 # Date/Time Handling
 python-dateutil==2.8.2
 pytz==2023.3.post1
 
-# Data Processing & Serialization
-openpyxl==3.1.2  # For potential Excel support
-pyarrow==14.0.1  # For efficient data handling
-
 # Additional Utilities
 streamlit-autorefresh==0.3.1
-tqdm==4.66.1  # For progress bars (potential future use)
 
 # Development Tools (optional)
 pytest==7.4.3

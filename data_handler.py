@@ -1,30 +1,17 @@
+# ==================== IMPORTS ====================
+# Data processing
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta, date, time
 import os
 
-DATA_FILE = "data.csv"
+# Local modules
+from data_constants import (
+    COLUMN_ORDER, NUMERIC_DEFAULTS, CATEGORICAL_DEFAULTS,
+    STRING_DEFAULTS, BOOLEAN_DEFAULTS, DATETIME_FORMAT, DATE_FORMAT, TAGS_SEPARATOR
+)
 
-# Define the consistent column order for saving
-# IMPORTANT: All new fields are added here
-COLUMN_ORDER = [
-    "date",
-    "task",
-    "start_time",
-    "end_time",
-    "time_taken",
-    "category",
-    "priority",      # New field
-    "mood",          # New field
-    "energy_level",  # New field
-    "focus_level",   # New field
-    "intent",        # New field
-    "difficulty",    # New field
-    "tags",          # New field
-    "notes",         # New field
-    "task_type",     # New field
-    "completed"
-]
+DATA_FILE = "data.csv"
 
 def load_data() -> pd.DataFrame:
     """
@@ -64,37 +51,31 @@ def save_data(df: pd.DataFrame):
     # Ensure all required columns exist, add missing ones with default values if necessary
     for col in COLUMN_ORDER:
         if col not in df.columns:
-            if col == "completed":
-                df[col] = False
-            elif col == "time_taken":
-                df[col] = 0.0
-            elif col in ["energy_level", "focus_level", "difficulty"]:
-                df[col] = -1
-            elif col in ["priority", "mood", "intent"]:
-                df[col] = "unknown"
-            elif col == "tags":
-                df[col] = ""
-            elif col == "notes":
-                df[col] = ""
-            elif col == "task_type":
-                df[col] = "manual"
+            if col in BOOLEAN_DEFAULTS:
+                df[col] = BOOLEAN_DEFAULTS[col]
+            elif col in NUMERIC_DEFAULTS:
+                df[col] = NUMERIC_DEFAULTS[col]
+            elif col in CATEGORICAL_DEFAULTS:
+                df[col] = CATEGORICAL_DEFAULTS[col]
+            elif col in STRING_DEFAULTS:
+                df[col] = STRING_DEFAULTS[col]
             else:
                 df[col] = ""
 
     # Convert datetime objects to ISO format strings before saving
     if 'start_time' in df.columns:
         # Ensure it's datetime first, then format to full timestamp
-        df["start_time"] = pd.to_datetime(df["start_time"], errors='coerce').dt.strftime("%Y-%m-%d %H:%M:%S")
+        df["start_time"] = pd.to_datetime(df["start_time"], errors='coerce').dt.strftime(DATETIME_FORMAT)
     if 'end_time' in df.columns:
         # Ensure it's datetime first, then format to full timestamp
-        df["end_time"] = pd.to_datetime(df["end_time"], errors='coerce').dt.strftime("%Y-%m-%d %H:%M:%S")
+        df["end_time"] = pd.to_datetime(df["end_time"], errors='coerce').dt.strftime(DATETIME_FORMAT)
     if 'date' in df.columns:
         # For date objects, convert to datetime first then format
-        df["date"] = pd.to_datetime(df["date"], errors='coerce').dt.strftime("%Y-%m-%d")
+        df["date"] = pd.to_datetime(df["date"], errors='coerce').dt.strftime(DATE_FORMAT)
 
     # Convert tags list to comma-separated string for CSV saving
     if 'tags' in df.columns:
-        df['tags'] = df['tags'].apply(lambda x: ','.join(x) if isinstance(x, list) else x)
+        df['tags'] = df['tags'].apply(lambda x: TAGS_SEPARATOR.join(x) if isinstance(x, list) else x)
         df['tags'] = df['tags'].fillna('') # Fill NaN tags (which would be float nan) with empty string
 
     # Select and reorder columns
@@ -146,22 +127,27 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # Handle new columns: fill NaNs and convert types
     # These defaults are applied if columns are missing or contain NaNs after loading
     if "priority" in cleaned_df.columns:
-        cleaned_df["priority"] = cleaned_df["priority"].fillna("Medium").astype(str)
+        cleaned_df["priority"] = cleaned_df["priority"].fillna(CATEGORICAL_DEFAULTS["priority"]).astype(str)
     if "mood" in cleaned_df.columns:
-        cleaned_df["mood"] = cleaned_df["mood"].fillna("😐 Neutral").astype(str)
+        cleaned_df["mood"] = cleaned_df["mood"].fillna(CATEGORICAL_DEFAULTS["mood"]).astype(str)
     if "energy_level" in cleaned_df.columns:
-        cleaned_df["energy_level"] = pd.to_numeric(cleaned_df["energy_level"], errors="coerce").fillna(5).astype(int)
+        cleaned_df["energy_level"] = pd.to_numeric(cleaned_df["energy_level"], errors="coerce").fillna(NUMERIC_DEFAULTS["energy_level"]).astype(int)
     if "focus_level" in cleaned_df.columns:
-        cleaned_df["focus_level"] = pd.to_numeric(cleaned_df["focus_level"], errors="coerce").fillna(5).astype(int)
+        cleaned_df["focus_level"] = pd.to_numeric(cleaned_df["focus_level"], errors="coerce").fillna(NUMERIC_DEFAULTS["focus_level"]).astype(int)
     if "intent" in cleaned_df.columns:
-        cleaned_df["intent"] = cleaned_df["intent"].fillna("Complete").astype(str)
+        cleaned_df["intent"] = cleaned_df["intent"].fillna(CATEGORICAL_DEFAULTS["intent"]).astype(str)
     if "difficulty" in cleaned_df.columns:
-        cleaned_df["difficulty"] = pd.to_numeric(cleaned_df["difficulty"], errors="coerce").fillna(3).astype(int)
+        cleaned_df["difficulty"] = pd.to_numeric(cleaned_df["difficulty"], errors="coerce").fillna(NUMERIC_DEFAULTS["difficulty"]).astype(int)
     if "tags" in cleaned_df.columns:
         # Convert comma-separated string from CSV to list, handle NaNs
-        cleaned_df["tags"] = cleaned_df["tags"].fillna("").astype(str).apply(lambda x: [tag.strip() for tag in x.split(',') if tag.strip()])
+        cleaned_df["tags"] = cleaned_df["tags"].fillna("").astype(str).apply(lambda x: [tag.strip() for tag in x.split(TAGS_SEPARATOR) if tag.strip()])
     else: # If 'tags' column is completely missing, add it as empty lists
         cleaned_df["tags"] = [[]] * len(cleaned_df)
+
+    if "notes" in cleaned_df.columns:
+        cleaned_df["notes"] = cleaned_df["notes"].fillna(STRING_DEFAULTS["notes"]).astype(str)
+    if "task_type" in cleaned_df.columns:
+        cleaned_df["task_type"] = cleaned_df["task_type"].fillna(CATEGORICAL_DEFAULTS["task_type"]).astype(str)
 
     if "notes" in cleaned_df.columns:
         cleaned_df["notes"] = cleaned_df["notes"].fillna("").astype(str)

@@ -1,18 +1,32 @@
+# ==================== IMPORTS ====================
+# Data processing
 import pandas as pd
 import numpy as np
+from datetime import datetime, date
+
+# Machine Learning
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import accuracy_score, mean_absolute_error
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from datetime import datetime, date
+
+# Utilities
 import warnings
+
+# Local modules
+from encoding_utils import CategoricalEncoder
+from data_preprocessing import (
+    ensure_numeric_columns,
+    extract_hour_from_datetime,
+    extract_date_components
+)
+
 warnings.filterwarnings('ignore')
 
 class MLModelHandler:
     def __init__(self):
         self.completion_model = None
         self.time_model = None
-        self.encoders = {}
+        self.encoders = CategoricalEncoder()
         self.completion_accuracy = 0
         self.time_mae = 0
         
@@ -22,28 +36,31 @@ class MLModelHandler:
             return pd.DataFrame(), {}
         
         df = data.copy()
-        df['difficulty'] = pd.to_numeric(df['difficulty'], errors='coerce').fillna(3).astype(int)
-        df['energy_level'] = pd.to_numeric(df['energy_level'], errors='coerce').fillna(5).astype(int)
-        df['focus_level'] = pd.to_numeric(df['focus_level'], errors='coerce').fillna(5).astype(int)
-        df['time_taken'] = pd.to_numeric(df['time_taken'], errors='coerce').fillna(30).astype(float)
         
+        # Use shared utility for numeric column preparation
+        numeric_mapping = {
+            'difficulty': (int, 3),
+            'energy_level': (int, 5),
+            'focus_level': (int, 5),
+            'time_taken': (float, 30)
+        }
+        df = ensure_numeric_columns(df, numeric_mapping)
+        
+        # Use shared encoder for categorical columns
         categorical_cols = ['category', 'priority', 'mood', 'intent']
         for col in categorical_cols:
             if col in df.columns:
                 df[col] = df[col].fillna('unknown').astype(str)
-                le = LabelEncoder()
-                le.fit(list(df[col].unique()) + ['unknown'])
-                df[col + '_encoded'] = le.transform(df[col])
-                self.encoders[col] = le
+                self.encoders.fit_categorical_column(df, col)
+                df = self.encoders.encode_column(df, col)
             else:
                 df[col] = 'unknown'
-                le = LabelEncoder()
-                le.fit(['unknown'])
-                df[col + '_encoded'] = le.transform(df[col])
-                self.encoders[col] = le
+                self.encoders.fit_categorical_column(df, col)
+                df = self.encoders.encode_column(df, col)
         
+        # Extract date/time features using shared utility
         df['start_time'] = pd.to_datetime(df['start_time'], errors='coerce')
-        df['hour'] = df['start_time'].dt.hour.fillna(12).astype(int)
+        df['hour'] = extract_hour_from_datetime(df, 'start_time').fillna(12).astype(int)
         df['date'] = pd.to_datetime(df['date'], errors='coerce')
         df['day_of_week'] = df['date'].dt.dayofweek.fillna(1).astype(int)
         
@@ -52,6 +69,9 @@ class MLModelHandler:
     def train_completion_model(self, data: pd.DataFrame):
         """Train task completion prediction model."""
         try:
+            if data is None or data.empty:
+                return "No data provided for training"
+            
             df = self.prepare_features(data)
             
             if df.empty or len(df) < 20:
@@ -85,12 +105,20 @@ class MLModelHandler:
             
             return f"Completion model trained with accuracy: {self.completion_accuracy:.1%}"
             
+        except ValueError as ve:
+            return f"Invalid data format: {str(ve)}"
+        except MemoryError:
+            return "Out of memory: Dataset too large for available resources"
         except Exception as e:
+            import traceback
             return f"Error training completion model: {str(e)}"
 
     def train_time_estimation_model(self, data: pd.DataFrame):
         """Train task duration estimation model."""
         try:
+            if data is None or data.empty:
+                return "No data provided for training"
+            
             df = self.prepare_features(data)
             
             if df.empty or len(df) < 20:
@@ -122,12 +150,20 @@ class MLModelHandler:
             
             return f"Time estimation model trained with MAE: {self.time_mae:.1f} minutes"
             
+        except ValueError as ve:
+            return f"Invalid data format: {str(ve)}"
+        except MemoryError:
+            return "Out of memory: Dataset too large for available resources"
         except Exception as e:
+            import traceback
             return f"Error training time estimator: {str(e)}"
 
     def predict_completion_probability(self, task_data: dict):
         """Predict task completion probability."""
         try:
+            if task_data is None or not isinstance(task_data, dict):
+                return 50.0
+            
             if self.completion_model is None:
                 return 50.0  # Default if no model
             
@@ -139,15 +175,15 @@ class MLModelHandler:
             features.append(task_data.get('hour', 12))
             features.append(task_data.get('day_of_week', 1))
             
+            # Use centralized encoder for categorical features
             for col in ['category', 'priority', 'mood', 'intent']:
-                if col in self.encoders:
+                if col in self.encoders.encoders:
                     try:
                         value = task_data.get(col, 'unknown')
-                        encoded = self.encoders[col].transform([str(value)])[0]
+                        encoded = self.encoders.encoders[col].transform([str(value)])[0]
                         features.append(encoded)
-                    except ValueError:
-                        encoded = self.encoders[col].transform(['unknown'])[0]
-                        features.append(encoded)
+                    except (ValueError, KeyError):
+                        features.append(self.encoders.encoders[col].transform(['unknown'])[0])
                     except Exception:
                         features.append(0)
                 else:
@@ -157,13 +193,20 @@ class MLModelHandler:
             prob = self.completion_model.predict_proba(X)[0][1]
             return round(prob * 100, 1)
             
+        except (ValueError, TypeError) as e:
+            print(f"Invalid task data format: {e}")
+            return 50.0
         except Exception as e:
+            import traceback
             print(f"Error predicting task completion: {e}")
             return 50.0
 
     def predict_task_duration(self, task_data: dict):
         """Predict task duration."""
         try:
+            if task_data is None or not isinstance(task_data, dict):
+                return 30
+            
             if self.time_model is None:
                 return 30
             
@@ -171,14 +214,13 @@ class MLModelHandler:
             features.append(max(1, min(5, task_data.get('difficulty', 3))))
             
             for col in ['category', 'priority', 'intent']:
-                if col in self.encoders:
+                if col in self.encoders.encoders:
                     try:
                         value = task_data.get(col, 'unknown')
-                        encoded = self.encoders[col].transform([str(value)])[0]
+                        encoded = self.encoders.encoders[col].transform([str(value)])[0]
                         features.append(encoded)
-                    except ValueError:
-                        encoded = self.encoders[col].transform(['unknown'])[0]
-                        features.append(encoded)
+                    except (ValueError, KeyError):
+                        features.append(self.encoders.encoders[col].transform(['unknown'])[0])
                     except Exception:
                         features.append(0)
                 else:
@@ -189,6 +231,10 @@ class MLModelHandler:
             duration = max(5, min(480, round(duration / 5) * 5))
             return int(duration)
             
+        except (ValueError, TypeError) as e:
+            print(f"Invalid task data format: {e}")
+            return 30
         except Exception as e:
+            import traceback
             print(f"Error predicting task duration: {e}")
             return 30

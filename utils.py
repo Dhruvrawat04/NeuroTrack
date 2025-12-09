@@ -1,16 +1,18 @@
-
+# ==================== IMPORTS ====================
+# Data processing
 import pandas as pd
 from datetime import datetime, timedelta
 from typing import Tuple, List, Optional
+
+# Logging
 import logging
+
+# Local modules
+from data_constants import DEFAULT_PRODUCTIVE_CATEGORIES, DEFAULT_WEIGHTS, NUMERIC_FIELDS
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Constants (could also be moved to config.py)
-DEFAULT_PRODUCTIVE_CATEGORIES = ["Coding", "Academics", "Development", "Project"]
-DEFAULT_WEIGHTS = {"time": 0.7, "completion": 0.3}
 
 def validate_dataframe(df: pd.DataFrame, required_columns: Optional[List[str]] = None) -> Tuple[bool, str]:
     """Validate dataframe structure and content with improved checks."""
