@@ -26,7 +26,8 @@ from charts import show_basic_charts
 from productivity_charts import show_productivity_charts
 from insight_charts import show_insight_charts
 
-# ==================== HEADER ====================
+# Time Series Forecasting
+from time_series_forecast import TimeSeriesForecaster
 st.set_page_config(page_title="🧠 NeuroTrack", layout="wide", initial_sidebar_state="expanded")
 
 # Enhanced header with branding
@@ -45,11 +46,21 @@ if "ml_handler" not in st.session_state:
     st.session_state.ml_handler = MLModelHandler()
     st.session_state.task_recommender = TaskRecommender()
     st.session_state.insights_generator = MLInsightsGenerator()
+    st.session_state.forecaster = TimeSeriesForecaster()
     st.session_state.ml_models_trained = False
     st.session_state.timer_running = False
     st.session_state.paused = False
     st.session_state.remaining_time = 0
     st.session_state.current_task = None
+    # Initialize toggle states for sections
+    st.session_state.setdefault('show_statistics', True)
+    st.session_state.setdefault('show_visualizations', True)
+    st.session_state.setdefault('show_performance', True)
+    st.session_state.setdefault('show_goals', True)
+    st.session_state.setdefault('show_import', True)
+    st.session_state.setdefault('show_task_management', True)
+    st.session_state.setdefault('show_insights', True)
+    st.session_state.setdefault('show_forecasting', True)
 
 # Load Data
 try:
