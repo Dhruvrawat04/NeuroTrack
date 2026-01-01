@@ -141,3 +141,28 @@ PRIORITY_COLORS = {
     'Medium': '#f59e0b',  # Amber (warm)
     'Low': '#1d4ed8'      # Blue (cool)
 }
+
+# ==================== MOTIVATIONAL QUOTES ====================
+# Daily productivity quotes for inspiration
+PRODUCTIVITY_QUOTES = [
+    {"text": "The only way to do great work is to love what you do.", "author": "Steve Jobs"},
+    {"text": "Don't watch the clock; do what it does. Keep going.", "author": "Sam Levenson"},
+    {"text": "The future depends on what you do today.", "author": "Mahatma Gandhi"},
+    {"text": "Success is the sum of small efforts repeated day in and day out.", "author": "Robert Collier"},
+    {"text": "Your time is limited, don't waste it living someone else's life.", "author": "Steve Jobs"},
+    {"text": "The way to get started is to quit talking and begin doing.", "author": "Walt Disney"},
+    {"text": "Don't wait. The time will never be just right.", "author": "Napoleon Hill"},
+    {"text": "You don't have to see the whole staircase, just take the first step.", "author": "Martin Luther King Jr."},
+    {"text": "Quality is not an act, it is a habit.", "author": "Aristotle"},
+    {"text": "The only impossible journey is the one you never begin.", "author": "Tony Robbins"},
+    {"text": "Your future is created by what you do today, not tomorrow.", "author": "Robert Kiyosaki"},
+    {"text": "Productivity is never an accident. It's always a result of commitment.", "author": "Unknown"},
+    {"text": "Do something today that your future self will thank you for.", "author": "Sean Patrick Flanery"},
+    {"text": "Excellence is not a destination; it is a continuous journey that never ends.", "author": "Brian Tracy"},
+    {"text": "The secret of getting ahead is getting started.", "author": "Mark Twain"},
+    {"text": "You don't rise to the level of your goals, you fall to the level of your systems.", "author": "James Clear"},
+    {"text": "Small daily improvements are the key to staggering long-term results.", "author": "Robin Sharma"},
+    {"text": "Motivation is what gets you started. Habit is what keeps you going.", "author": "Jim Ryun"},
+    {"text": "The best time for new beginnings is now.", "author": "Unknown"},
+    {"text": "Progress, not perfection.", "author": "Unknown"},
+]
